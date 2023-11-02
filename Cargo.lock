@@ -1457,6 +1457,7 @@ dependencies = [
  "polars-lazy",
  "pyo3",
  "pyo3-polars",
+ "serde",
 ]
 
 [[package]]

@@ -243,19 +243,20 @@ class NumExt:
         denominator = 1.0 / (self._expr.abs() + other.abs())
         return (1.0 / self._expr.count()) * numerator.dot(denominator)
 
-    def lstsq(self, *other: pl.Expr) -> pl.Expr:
-        """
-        Computes least squares solution to a linear matrix equation.
-
-        Parameters
-        ----------
-        other
-            List of Polars expressions
-        """
+    def lstsq(
+        self,
+        *regressors: pl.IntoExpr,
+        weights: pl.IntoExpr | None = None,
+        drop_null_regressors: bool = False,
+    ) -> pl.Expr:
+        if weights is None:
+            weights = pl.lit(1.0)
+        args = [weights] + list(regressors)
         return self._expr.register_plugin(
             lib=lib,
-            symbol="pl_lstsq",
-            args=list(other),
+            symbol="lstsq",
+            args=args,
+            kwargs={"drop_null_regressors": drop_null_regressors},
             is_elementwise=False,
         )
 
